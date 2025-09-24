@@ -17,7 +17,7 @@ export class UsersService {
   async createUser(data: {
     name: string;
     email: string;
-    passwordHash: string;
+    hashedPassword: string;
   }): Promise<UserRow> {
     return this.repository.createUser(data);
   }

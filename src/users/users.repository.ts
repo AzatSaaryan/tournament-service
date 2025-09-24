@@ -25,11 +25,11 @@ export class UsersRepository {
   async createUser(data: {
     name: string;
     email: string;
-    passwordHash: string;
+    hashedPassword: string;
   }): Promise<UserRow> {
     const result = await this.db.query<UserRow>(
       `INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING *`,
-      [data.name, data.email, data.passwordHash],
+      [data.name, data.email, data.hashedPassword],
     );
     return result.rows[0];
   }

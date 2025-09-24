@@ -6,6 +6,11 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private pool: Pool;
 
   async onModuleInit() {
+    const databaseUrl = process.env.DATABASE_URL;
+
+    if (!databaseUrl) {
+      throw new Error('DATABASE_URL is not set in environment variables');
+    }
     this.pool = new Pool({
       connectionString: process.env.DATABASE_URL,
     });
