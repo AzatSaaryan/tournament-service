@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -10,7 +11,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(data: { name: string; email: string; password: string }) {
+  async register(data: { username: string; email: string; password: string }) {
     const existingUser = await this.userService.findByEmail(data.email);
     if (existingUser) throw new Error('User with this email already exists');
 
@@ -18,28 +19,35 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(data.password, salt);
 
     const newUser = await this.userService.createUser({
-      name: data.name,
+      username: data.username,
       email: data.email,
       hashedPassword,
     });
     return {
-      user: { id: newUser.id, name: newUser.name, email: newUser.email },
+      user: {
+        id: newUser.id,
+        username: newUser.username,
+        email: newUser.email,
+      },
     };
   }
 
-  async login(data: { email: string; password: string }) {
+  async login(data: { email: string; password: string }, res: Response) {
     const user = await this.userService.findByEmail(data.email);
     if (!user) throw new UnauthorizedException();
 
-    const isPasswordValid = await bcrypt.compare(
-      data.password,
-      user.password_hash,
-    );
+    const isPasswordValid = await bcrypt.compare(data.password, user.password);
     if (!isPasswordValid) throw new UnauthorizedException();
 
-    const payload = { sub: user.id, username: user.name };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+    const payload = { sub: user.id, username: user.username };
+    const token = await this.jwtService.signAsync(payload);
+
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.json({ message: 'Login successful', token });
   }
 }
