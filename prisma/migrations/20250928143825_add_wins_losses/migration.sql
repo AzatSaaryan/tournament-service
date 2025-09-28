@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "public"."User" ADD COLUMN     "losses" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "wins" INTEGER NOT NULL DEFAULT 0;

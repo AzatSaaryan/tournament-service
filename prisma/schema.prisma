@@ -14,6 +14,9 @@ model User {
   password   String
   createdAt  DateTime @default(now())
 
+  wins   Int @default(0)
+  losses Int @default(0)
+
   player1Matches Match[] @relation("Player1Matches")
   player2Matches Match[] @relation("Player2Matches")
   winnerMatches  Match[] @relation("WinnerMatches")

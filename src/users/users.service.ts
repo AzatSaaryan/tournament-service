@@ -33,8 +33,18 @@ export class UsersService {
         id: true,
         email: true,
         username: true,
+        wins: true,
+        losses: true,
         createdAt: true,
       },
+    });
+  }
+
+  async getLeaderboard(limit = 10) {
+    return this.prisma.user.findMany({
+      orderBy: { wins: 'desc' },
+      take: limit,
+      select: { id: true, username: true, wins: true, losses: true },
     });
   }
 }

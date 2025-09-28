@@ -28,11 +28,25 @@ export class MatchsService {
     if (!match) throw new Error('Match not found');
 
     const winnerId = Math.random() < 0.5 ? match.player1Id : match.player2Id;
+    const loserId =
+      winnerId === match.player1Id ? match.player2Id : match.player1Id;
 
-    return await this.prisma.match.update({
+    const updatedMatch = await this.prisma.match.update({
       where: { id: matchId },
       data: { winnerId },
     });
+
+    await this.prisma.user.update({
+      where: { id: winnerId },
+      data: { wins: { increment: 1 } },
+    });
+
+    await this.prisma.user.update({
+      where: { id: loserId },
+      data: { losses: { increment: 1 } },
+    });
+
+    return updatedMatch;
   }
 
   async getMatchesByTournament(tournamentId: string): Promise<Match[]> {
