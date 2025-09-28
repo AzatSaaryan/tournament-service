@@ -1,13 +1,13 @@
-import { Controller, Post, Get, Param, Patch } from '@nestjs/common';
+import { Controller, Post, Get, Param, Patch, Body } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 
 @Controller('tournaments')
 export class TournamentsController {
   constructor(private readonly tournamentsService: TournamentsService) {}
 
-  @Post(':name')
-  async createTournament(@Param('name') name: string) {
-    return await this.tournamentsService.createTournament(name);
+  @Post()
+  async createTournament(@Body() body: { name: string }) {
+    return await this.tournamentsService.createTournament(body.name);
   }
 
   @Patch(':id/start')

@@ -4,6 +4,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { TournamentsModule } from './tournaments/tournaments.module';
+import { MatchsModule } from './matches/matches.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { TournamentsModule } from './tournaments/tournaments.module';
     AuthModule,
     PrismaModule,
     TournamentsModule,
+    MatchsModule,
   ],
   controllers: [],
   providers: [],
