@@ -8,17 +8,38 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-  username String @unique
-  email String @unique
-  password String
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  username   String   @unique
+  email      String   @unique
+  password   String
+  createdAt  DateTime @default(now())
+
+  player1Matches Match[] @relation("Player1Matches")
+  player2Matches Match[] @relation("Player2Matches")
+  winnerMatches  Match[] @relation("WinnerMatches")
 }
 
 model Tournament {
-  id String @id @default(uuid())
-  name String
-  status String
+  id        String   @id @default(uuid())
+  name      String
+  status    String
   createdAt DateTime @default(now())
+  matches   Match[]
+}
 
+model Match {
+  id           String     @id @default(uuid())
+  tournament   Tournament @relation(fields: [tournamentId], references: [id])
+  tournamentId String
+
+  player1      User @relation("Player1Matches", fields: [player1Id], references: [id])
+  player1Id    String
+
+  player2      User @relation("Player2Matches", fields: [player2Id], references: [id])
+  player2Id    String
+
+  winner       User? @relation("WinnerMatches", fields: [winnerId], references: [id])
+  winnerId     String?
+
+  createdAt    DateTime @default(now())
 }
